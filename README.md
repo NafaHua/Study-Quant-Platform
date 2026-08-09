@@ -1,4 +1,4 @@
-# Study-Quant-Platform
+[自学量化平台-数学专属-丰富仪表盘.html](https://github.com/user-attachments/files/30872608/-.-.html)
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
