@@ -1,10 +1,9 @@
-[自学量化平台-数学专属-丰富仪表盘.html](https://github.com/user-attachments/files/30872608/-.-.html)
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>自学量化平台 · 数学专属 (丰富仪表盘)</title>
+  <title>自学量化平台 · 数学专属 </title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
