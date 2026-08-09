@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +16,6 @@
 
     <style>
         :root {
-            /* 深色主题 */
             --bg-deep: #0b0f1c;
             --bg-card: rgba(18, 23, 41, 0.75);
             --bg-card-solid: #121729;
@@ -25,7 +25,6 @@
             --text-secondary: #8e97b0;
             --text-muted: #5c6480;
 
-            /* 强调色 */
             --accent: #6d8aff;
             --accent-glow: rgba(109, 138, 255, 0.35);
             --success: #34d399;
@@ -59,9 +58,13 @@
             background: var(--bg-deep);
             color: var(--text-primary);
             display: flex;
+            flex-direction: row;
+            /* ★ 显式声明横版 */
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
+            min-width: 0;
+            /* ★ 防止 flex 溢出 */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             letter-spacing: -0.01em;
@@ -122,7 +125,6 @@
             }
         }
 
-        /* 网格点阵 */
         .bg-grid {
             position: fixed;
             inset: 0;
@@ -136,6 +138,9 @@
         /* ========== 侧边栏 ========== */
         .sidebar {
             width: 250px;
+            min-width: 200px;
+            /* ★ 保证不被压缩 */
+            flex-shrink: 0;
             background: rgba(15, 20, 38, 0.7);
             backdrop-filter: var(--blur-glass);
             -webkit-backdrop-filter: var(--blur-glass);
@@ -143,7 +148,6 @@
             display: flex;
             flex-direction: column;
             padding: 1.8rem 0;
-            flex-shrink: 0;
             z-index: 10;
             position: relative;
         }
@@ -164,6 +168,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            flex-shrink: 0;
             box-shadow: 0 0 20px var(--accent-glow);
         }
         .sidebar-logo .title {
@@ -191,6 +196,7 @@
             font-size: 0.88rem;
             position: relative;
             user-select: none;
+            white-space: nowrap;
         }
         .nav-item:hover {
             background: rgba(255, 255, 255, 0.04);
@@ -202,23 +208,17 @@
             font-weight: 600;
             box-shadow: 0 0 0 1px rgba(109, 138, 255, 0.15) inset;
         }
-        .nav-item .badge {
-            margin-left: auto;
-            font-size: 0.65rem;
-            background: var(--accent);
-            color: #fff;
-            padding: 0.15rem 0.5rem;
-            border-radius: 20px;
-            font-weight: 700;
-        }
 
         /* ========== 主区域 ========== */
         .main {
             flex: 1;
+            min-width: 0;
+            /* ★ 关键：允许 flex 子元素收缩 */
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             overflow-x: hidden;
+            /* ★ 防止横向滚动干扰宽度 */
             padding: 1.5rem 1.8rem;
             z-index: 5;
             position: relative;
@@ -245,6 +245,7 @@
             -webkit-backdrop-filter: var(--blur-glass);
             border-radius: var(--radius);
             border: 1px solid var(--border-subtle);
+            flex-shrink: 0;
         }
         .top-strip .pill {
             display: inline-flex;
@@ -318,12 +319,6 @@
             font-weight: 650;
             color: var(--text-primary);
             letter-spacing: -0.01em;
-        }
-        .card-header .chip {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.7rem;
-            border-radius: 20px;
-            font-weight: 600;
         }
 
         /* 统计卡片网格 */
@@ -623,13 +618,15 @@
             font-size: 0.8rem;
         }
 
-        /* ========== 响应式 ========== */
-        @media (max-width: 768px) {
+        /* ========== ★ 响应式 — 仅真正的小屏幕触发 ========== */
+        @media (max-width: 640px) {
             body {
                 flex-direction: column;
+                height: 100dvh;
             }
             .sidebar {
                 width: 100%;
+                min-width: unset;
                 flex-direction: row;
                 overflow-x: auto;
                 padding: 0.5rem;
@@ -652,6 +649,8 @@
             .main {
                 padding: 0.8rem;
                 gap: 0.8rem;
+                overflow-y: auto;
+                overflow-x: hidden;
             }
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -678,6 +677,7 @@
             }
         }
 
+        /* ========== ★ 桌面宽屏优化 ========== */
         @media (min-width: 1400px) {
             .stats-grid {
                 grid-template-columns: repeat(7, 1fr);
@@ -864,7 +864,6 @@
         let studyNotes = [];
         const chartInstances = {};
 
-        // ECharts 深色主题通用配置
         const darkTheme = {
             textStyle: { color: '#8e97b0' },
             tooltip: { backgroundColor: 'rgba(18,23,41,0.95)', borderColor: 'rgba(109,138,255,0.3)',
@@ -874,7 +873,6 @@
         function disposeChart(key) { if (chartInstances[key]) { chartInstances[key].dispose(); delete chartInstances[
                 key]; } }
 
-        // 持久化
         function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
 
         function load(k) { const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; }
@@ -896,7 +894,6 @@
                 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
                 const viewEl = document.getElementById(`view-${vn}`);
                 if (viewEl) viewEl.classList.add('active');
-                // 按需渲染
                 if (vn === 'data') renderDataTable();
                 if (vn === 'dashboard') renderDashboard();
                 if (vn === 'predict') { renderHistory();
@@ -1055,7 +1052,6 @@
             ].map(s => `<div class="stat-card"><div class="stat-value">${s.v}</div><div class="stat-label">${s.l}</div></div>`)
                 .join('');
 
-            // 图表
             const chrono = [...math].sort((a, b) => new Date(a.date) - new Date(b.date)).slice(-100);
             const dates = chrono.map(r => r.date);
             const testVals = chrono.map(r => r.test);
